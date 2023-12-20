@@ -11,7 +11,7 @@ It is also allowed to use other text editor like -- vi/vim.
 ### Step 1 obtain the sys access authority ###
 After start the Debian System you will see the image as below.
 ![](./image uploaded/1.jpg)
-#### Alternative ####
+#### <font color="green">Alternative</font> ####
     su -
 The system will ask you for the root password.
 ##### For Learning Environment #####
