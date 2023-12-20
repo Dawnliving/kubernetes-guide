@@ -13,7 +13,7 @@ After start the Debian System you will see the image as below.
 
 ![image](./image-uploaded/1.jpg)
 
-#### <font color="green">Alternative</font> ####
+#### Alternative ####
     su -
 The system will ask you for the root password.
 ##### For Learning Environment #####
@@ -39,4 +39,4 @@ Here offers the full-access to the example account.
 
 (For the `vi/vim` usually to press `:` ,  then input `wq` then press `Enter` to save and exit)
 ### Step 2 Edit the Package Repository ###
-<font color="red" size="50">To be continued</font>
+To be continued
