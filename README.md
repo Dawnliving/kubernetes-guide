@@ -10,7 +10,9 @@ There is one thing have to discuss with, In Debian 12.4 the text editor -- nano 
 It is also allowed to use other text editor like -- vi/vim.
 ### Step 1 obtain the sys access authority ###
 After start the Debian System you will see the image as below.
+
 ![image](./image-uploaded/1.jpg)
+
 #### <font color="green">Alternative</font> ####
     su -
 The system will ask you for the root password.
