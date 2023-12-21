@@ -21,7 +21,7 @@ It is also allowed to use other text editor like -- vi/vim.
 
 After start the Debian System you will see the image as below.
 
-![image](./image-uploaded/1.jpg)
+![image](./image-upload/1.jpg)
 
 #### Alternative ####
     su -
@@ -34,7 +34,7 @@ Skip to next step
 ##### For Poduction Environment  #####
 
     nano /etc/sudoers
-![image](./image-uploaded/2.jpg)
+![image](./image-upload/2.jpg)
 Locate at the line as below:
 
     # Allow members of group sudo to execute any command
@@ -47,7 +47,7 @@ Here offers the full-access to the example account.
 
 `dawnliving ALL=(ALL:ALL) ALL`
 
-![image](./image-uploaded/3.jpg)
+![image](./image-upload/3.jpg)
 
 (For the `nano` text editor press `Ctrl+O` and `Enter` to save the change to the file and press `Ctrl+X` to exit)
 
@@ -68,7 +68,7 @@ In this website, need to find the example that official offers, then find the ex
 
 The example as below:
 
-![image](./image-uploaded/4.jpg)
+![image](./image-upload/4.jpg)
 
 Then paste one example(based on your requirement) to `source.list` save and exit.
 
