@@ -6,7 +6,10 @@ Mostly this guidance is for the user who **don't have any experience** in kubern
 ## Environment ## 
 
 
-Debian 12.4 (updated to latest at 2023/12/20)
+Debian 12.4 (up-to-date to latest at 2023/12/20)
+containerd
+Kubernetes v1.29.0 (up-to-date at 2023/12/21)
+
 
 ## Content ##
 
@@ -72,7 +75,22 @@ The example as below:
 
 Then paste one example(based on your requirement) to `source.list` save and exit.
 
-### Step 3 Base App installation ###
+### Step 3 Proxy Setting (If needed) ###
 
+**Notice**: 
 
-To be continued
+1. If your environment need to connect the Internet by Proxy. The guidance as below.
+2. This step is **not necessary** for all users. If needed, continue reading. If not, skip to next step.
+
+The root system access authority is needed. If the user log in is not root, the `sudo` is needed to attach to the front of all the following commands.
+
+`systemctl set-environment http_proxy=your-example:port`
+
+`systemctl set-environment https_proxy=your-example:port`
+
+`systemctl set-environment no_proxy=localhost,127.0.0.0/8,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12`
+
+Setting as above will let the system all the Internet connection through the proxy setting except the `no_proxy` declaration. If you don't want other service that don't mention in the guidance connect to the Internet through the proxy, modify the `no_proxy` setting, in case lead to other service connection refused error.
+
+### Step 4 Container Runtimes Installation###
+To be continued.
