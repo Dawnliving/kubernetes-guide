@@ -39,4 +39,20 @@ Here offers the full-access to the example account.
 
 (For the `vi/vim` usually to press `:` ,  then input `wq` then press `Enter` to save and exit)
 ### Step 2 Edit the Package Repository ###
-To be continued
+
+This step mainly talked about how to edit apt repository. There have a lot of ways to install required apps and kubernetes. But in this guidance, all the required apps and kubernetes(k8s) will be installed by **apt** package control tool(**Debian/Ubuntu**, in Centos uses yum).
+
+`nano /etc/apt/source.list`
+
+Then visit the website(Here offer the official repository example)
+
+[https://wiki.debian.org/SourcesList](https://wiki.debian.org/SourcesList)
+
+In this website, need to find the example that official offers, then find the exact version of the operating system.
+(This guide will choose Debian 12(Bookworm).)
+
+The example as below:
+
+![image](./image-uploaded/4.jpg)
+
+
