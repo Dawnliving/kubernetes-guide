@@ -146,4 +146,35 @@ Will get such result as below.
 
 	apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-To be continued.
+3. Create a containerd configuration file.
+
+
+    containerd config default | sudo tee /etc/containerd/config.toml
+
+4. Configuring the systemd cgroup driver.
+
+
+	nano /etc/containerd/config.toml
+
+set like below:
+
+
+	[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+	  ...
+	  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+	    SystemdCgroup = true
+
+And:
+
+
+	[plugins."io.containerd.grpc.v1.cri"]
+	  sandbox_image = "registry.k8s.io/pause:3.2"
+
+Then:
+
+
+	systemctl restart containerd
+
+
+### Step 5 Install kubeadm ###
+To be continued
