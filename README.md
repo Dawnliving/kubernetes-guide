@@ -139,7 +139,7 @@ Notice:
 
 Will get such result as below.
 
-![image](./image-upload/5.jpg)
+![image](./image-upload/4.jpg)
 
 2. Install the Docker packages.
 
