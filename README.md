@@ -409,6 +409,6 @@ Check the status of your nodes
 
 	kubectl get nodes
 
-Get the results as below. Then **Congratulation**! All the kubenetes is installed successfully! All the steps are completed!
+Get the results as below. Then **Congratulation**! All the kubernetes clusters are installed successfully! All the steps are completed!
 
 ![image](./image-upload/8.jpg)
