@@ -100,7 +100,7 @@ The root system access authority is needed. If the user log in is not root, the 
 
 Setting as above will let the system all the Internet connection through the proxy setting except the `no_proxy` declaration. If you don't want other service that don't mention in the guidance connect to the Internet through the proxy, modify the `no_proxy` setting, in case lead to other service connection refused error.
 
-### Step 4 Container Runtimes Installation###
+### Step 4 Container Runtimes Installation ###
 
 Before Installing kubernetes, must do some preparation.
 
@@ -303,7 +303,7 @@ Then pull the images from the server.
 	kubeadm config images pull
 
 
-Modify the hostname so that kubernetes can access into nodes by hostname.
+Modify the hostname so that kubernetes can access into nodes by hostname.（**all nodes needed to be done**）
 
 	nano /etc/hosts
 
