@@ -142,29 +142,29 @@ According to the most usage of container, This guide will choose the **container
 
 ###If not root authority , all the command need to add **sudo**(including the pipe operator).###
 
-1. Set up Docker's apt repository.
+Set up Docker's apt repository.
 
 
-    #Add Docker's official GPG key:
-    
-    apt-get update
-    
-    apt-get install ca-certificates curl gnupg
-    
-    install -m 0755 -d /etc/apt/keyrings
-    
-    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    
-    chmod a+r /etc/apt/keyrings/docker.gpg
-    
-    #Add the repository to Apt sources:
-    
-    echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
-    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-    tee /etc/apt/sources.list.d/docker.list > /dev/null
-    
-    apt-get update
+	#Add Docker's official GPG key:
+	
+	apt-get update
+	
+	apt-get install ca-certificates curl gnupg
+	
+	install -m 0755 -d /etc/apt/keyrings
+	
+	curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+	
+	chmod a+r /etc/apt/keyrings/docker.gpg
+	
+	#Add the repository to Apt sources:
+	
+	echo \
+	"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+	$(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+	tee /etc/apt/sources.list.d/docker.list > /dev/null
+	
+	apt-get update
 
 	    
 Notice:
@@ -177,17 +177,17 @@ Will get such result as below.
 
 ![image](./image-upload/4.jpg)
 
-2. Install the Docker packages.
+Install the Docker packages.
 
 
 	apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-3. Create a containerd configuration file.
+Create a containerd configuration file.
 
 
     containerd config default | sudo tee /etc/containerd/config.toml
 
-4. Configuring the systemd cgroup driver.
+Configuring the systemd cgroup driver.
 
 
 	nano /etc/containerd/config.toml
