@@ -102,6 +102,42 @@ Setting as above will let the system all the Internet connection through the pro
 
 ### Step 4 Container Runtimes Installation###
 
+Before Installing kubernetes, must do some preparation.
+
+Forwarding IPv4 and letting iptables see bridged traffic.
+
+
+	cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+	overlay
+	br_netfilter
+	EOF
+	
+	sudo modprobe overlay
+	sudo modprobe br_netfilter
+	
+	# sysctl params required by setup, params persist across reboots
+	cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+	net.bridge.bridge-nf-call-iptables  = 1
+	net.bridge.bridge-nf-call-ip6tables = 1
+	net.ipv4.ip_forward                 = 1
+	EOF
+	
+	# Apply sysctl params without reboot
+	sudo sysctl --system
+
+Verify that the br_netfilter, overlay modules are loaded by running the following commands:
+
+	lsmod | grep br_netfilter
+	lsmod | grep overlay
+
+Verify that the net.bridge.bridge-nf-call-iptables, net.bridge.bridge-nf-call-ip6tables, and net.ipv4.ip_forward system variables are set to 1 in your sysctl config by running the following command:
+
+	sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward
+
+And kubernetes doesn's support swap, need to turn it off.
+
+	swapoff -a
+
 According to the most usage of container, This guide will choose the **containerd** as the Container Runtimes.
 
 ###If not root authority , all the command need to add **sudo**(including the pipe operator).###
@@ -172,9 +208,207 @@ And:
 
 Then:
 
-
 	systemctl restart containerd
 
+If proxy is needed:
 
-### Step 5 Install kubeadm ###
-To be continued
+	systemctl enable docker
+	systemctl enable containerd
+	
+	mkdir /etc/systemd/system/docker.service.d
+	mkdir /etc/systemd/system/containerd.service.d
+
+	nano /etc/systemd/system/docker.service.d/http-proxy.conf
+	nano /etc/systemd/system/containerd.service.d/http-proxy.conf
+
+Paste the content to both of the files as below, then save and exit:
+
+	[Service]
+	Environment="HTTP_PROXY=http://example.com:port" "HTTPS_PROXY=http://example.com:port" "NO_PROXY=localhost,127.0.0.0/8,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,*.local,local.*,docker-registry.example.com,.corp"
+	#Have to replace the http://example.com:port with your proxy server.	
+
+### Step 5 Install kubernetes ###
+
+
+
+These instructions are for Kubernetes 1.29.
+
+	sudo apt-get update
+	# apt-transport-https may be a dummy package; if so, you can skip that package
+	sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+
+	curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+	# This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
+	echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+	#install kubelet,kubeadm and kubectl, and pin the version.
+	sudo apt-get update
+	sudo apt-get install -y kubelet kubeadm kubectl
+	sudo apt-mark hold kubelet kubeadm kubectl
+
+### Notice ### 
+
+The above steps needed to be apply for all the machines(including the master node(s) and the slave node(s)).
+
+
+From this line begin, without specify, always needed to be done only on master node.
+
+[Reference](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/configure-cgroup-driver/)
+
+Configuring a cgroup driver.
+	
+	nano kubeadm-config.yaml
+
+Then paste the following content, save and exit.
+
+	# kubeadm-config.yaml
+	kind: ClusterConfiguration
+	apiVersion: kubeadm.k8s.io/v1beta3
+	kubernetesVersion: v1.29.0
+	---
+	kind: KubeletConfiguration
+	apiVersion: kubelet.config.k8s.io/v1beta1
+	cgroupDriver: systemd
+
+
+
+> Explanation:
+> If at the moment, want to add more configuration, just follow as below instead:
+> `kubeadm config print init-defaults > kubeadm-config.yaml`
+> change the advertiseAddress and add the cgroupDriver at least.
+> find the line like this:
+> `advertiseAddress: 1.2.3.4`
+> and replace the ip address based on your own Environment.
+> then add the below content in the end.
+> 
+    ---
+    kind: KubeletConfiguration
+    apiVersion: kubelet.config.k8s.io/v1beta1
+    cgroupDriver: systemd
+> save and exit.
+    
+
+
+Then pull the images from the server.
+
+	#(Proxy if needed）
+	export http_proxy=http://example_ip:port
+	export https_proxy=http://example_ip:port
+	------------------------------------------
+	
+
+
+	kubeadm config images list
+	kubeadm config images pull
+
+
+Modify the hostname so that kubernetes can access into nodes by hostname.
+
+	nano /etc/hosts
+
+Based on your IP Address and hostname of you system.
+
+Example Input
+
+	192.168.3.60    debian-master
+	192.168.3.61    debian-node1
+	192.168.3.62    debian-node2
+
+
+Save and Exit. Synchronize the setting.
+
+	sysctl --system 
+
+Before Initialization, need to Configure the Container Runtimes Interface.
+
+	nano /etc/crictl.yaml
+
+Then modify the line
+	
+	runtime-endpoint: ""
+
+like this:
+
+	runtime-endpoint:"unix:///run/containerd/containerd.sock"
+
+Then save the file and exit.
+
+Finish the initialization.
+
+	kubeadm init --config kubeadm-config.yaml
+
+Get the result like this:
+
+![image](./image-upload/5.jpg)
+
+Complete the end step:
+
+	mkdir -p $HOME/.kube
+	sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+	sudo chown $(id -u):$(id -g) $HOME/.kube/config	
+
+	nano ~/.bashrc
+	# paste the content, then save and exit
+	export /etc/kubernetes/admin.conf
+	
+	source ~/.bashrc
+
+Then Congratulation, then master node of kubernetes installation is accomplished!
+
+### Step 6 Join the nodes ###
+
+At the master node, can get the join token when the initialization accomplished, go through the end of Step 5. 
+You can find the token at **the master node** as well use command:
+
+	kubeadm token create --print-join-command
+
+Then at the slave nodes join the clusters.
+
+	kubeadm join your-ip:port --token example-token(**needed to replace**) --discovery-token-ca-cert-hash sha256:example-sha256-hash(**needed to replace**)
+
+ 
+The result:
+
+![image](./image-upload/6.jpg)
+
+### Step 7 Install a Pod network add-on ###
+
+[Reference1](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network)
+[Reference2](https://github.com/containernetworking/cni?tab=readme-ov-file#3rd-party-plugins)
+
+Choose one of pod network add-on, here will choose Calico as example.
+
+[Reference3](https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises#install-calico)
+
+![image](./image-upload/7.jpg)
+
+Choose the compatible version for your own environment. Here will choose the 50 nodes or less.
+
+	kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
+
+Then complete the configuration:
+
+	mkdir -p $HOME/.kube
+	sudo cp -i /etc/kubernetes/kubelet.conf $HOME/.kube/config
+	sudo chown $(id -u):$(id -g) $HOME/.kube/config	
+
+	nano ~/.bashrc
+	# paste the content, then save and exit
+	export /etc/kubernetes/admin.conf
+	
+	source ~/.bashrc
+
+Watch the processes when all of them is running.
+
+	watch kubectl get pod -n kube-system
+
+### In the end ###
+
+Check the status of your nodes
+
+	kubectl get nodes
+
+Get the results as below. Then **Congratulation**! All the kubenetes is installed successfully! All the steps are completed!
+
+![image](./image-upload/8.jpg)
