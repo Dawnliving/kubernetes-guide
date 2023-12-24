@@ -6,7 +6,7 @@ Mostly this guidance is for the user who **don't have any experience** in kubern
 ## Environment ## 
 
 
-Debian 12.4 (up-to-date to latest at 2023/12/20)
+Debian 12.4 (up-to-date to at 2023/12/20)
 containerd
 Kubernetes v1.29.0 (up-to-date at 2023/12/21)
 
