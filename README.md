@@ -302,6 +302,7 @@ Then pull the images from the server.
 	kubeadm config images list
 	kubeadm config images pull
 
+---
 
 Modify the hostname so that kubernetes can access into nodes by hostname.（**all nodes needed to be done**）
 
@@ -319,6 +320,8 @@ Example Input
 Save and Exit. Synchronize the setting.
 
 	sysctl --system 
+
+----
 
 Before Initialization, need to Configure the Container Runtimes Interface.
 
