@@ -36,7 +36,7 @@ The system will ask you for the root password.
 
 Skip to next step
 
-##### For Poduction Environment  #####
+##### For Production Environment  #####
 
     nano /etc/sudoers
 ![image](./image-upload/2.jpg)
@@ -372,6 +372,18 @@ Then at the slave nodes join the clusters.
 
 	kubeadm join your-ip:port --token example-token(**needed to replace**) --discovery-token-ca-cert-hash sha256:example-sha256-hash(**needed to replace**)
 
+Then complete the configuration:
+
+	mkdir -p $HOME/.kube
+	sudo cp -i /etc/kubernetes/kubelet.conf $HOME/.kube/config
+	sudo chown $(id -u):$(id -g) $HOME/.kube/config	
+
+	nano ~/.bashrc
+	# paste the content, then save and exit
+	export /etc/kubernetes/kubelet.conf
+	
+	source ~/.bashrc
+
  
 The result:
 
@@ -392,17 +404,6 @@ Choose the compatible version for your own environment. Here will choose the 50 
 
 	kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
 
-Then complete the configuration:
-
-	mkdir -p $HOME/.kube
-	sudo cp -i /etc/kubernetes/kubelet.conf $HOME/.kube/config
-	sudo chown $(id -u):$(id -g) $HOME/.kube/config	
-
-	nano ~/.bashrc
-	# paste the content, then save and exit
-	export /etc/kubernetes/admin.conf
-	
-	source ~/.bashrc
 
 Watch the processes when all of them is running.
 
